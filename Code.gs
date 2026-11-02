@@ -46,7 +46,8 @@ function doPost(e) {
       default:       return json_({ ok: false, error: 'unknown_action' });
     }
   } catch (err) {
-    return json_({ ok: false, error: 'server_error', message: String(err && err.message || err) });
+    console.error(err);
+    return json_({ ok: false, error: 'server_error' });
   }
 }
 
@@ -117,7 +118,7 @@ function createOrder_(b) {
       utm_content: clean_(b.utm_content, 120),
       page_url: clean_(b.page_url, 300),
     };
-    sh.appendRow(HEADERS.Orders.map(h => asText_(row[h])));
+    appendText_(sh, HEADERS.Orders.map(h => asText_(row[h])));
     return { ok: true, order_id: orderId, total: total };
   } finally {
     lock.releaseLock();
@@ -166,7 +167,7 @@ function updateOrder_(b) {
       if (values[i][idx.order_id] !== String(b.order_id)) continue;
       if (s.role !== 'admin' && values[i][idx.client_id] !== s.client_id) return { ok: false, error: 'forbidden' };
       const rowNo = i + 1;
-      if (b.status) sh.getRange(rowNo, idx.status + 1).setValue(b.status);
+      if (b.status) sh.getRange(rowNo, idx.status + 1).setNumberFormat('@').setValue(b.status);
       if (typeof b.admin_note === 'string') sh.getRange(rowNo, idx.admin_note + 1).setValue(asText_(clean_(b.admin_note, 300)));
       sh.getRange(rowNo, idx.updated_at + 1).setValue(fmt_(new Date(), 'yyyy-MM-dd HH:mm:ss'));
       sh.getRange(rowNo, idx.updated_by + 1).setValue(s.username);
@@ -259,11 +260,11 @@ function upsertUser(username, password, clientId, displayName, role) {
   const values = sh.getDataRange().getDisplayValues();
   for (let i = 1; i < values.length; i++) {
     if (String(values[i][0]).toLowerCase() === username) {
-      sh.getRange(i + 1, 1, 1, row.length).setValues([row.map(asText_)]);
+      sh.getRange(i + 1, 1, 1, row.length).setNumberFormat('@').setValues([row.map(asText_)]);
       return 'updated';
     }
   }
-  sh.appendRow(row.map(asText_));
+  appendText_(sh, row.map(asText_));
   return 'created';
 }
 
@@ -333,6 +334,12 @@ function menuAddProduct() {
 }
 
 /* ============================ Helpers ============================ */
+
+// يكتب صف جديد كنص صريح — appendRow كان بيحوّل 01xxxxxxxxx لرقم ويشيل الصفر
+function appendText_(sh, values) {
+  const r = sh.getLastRow() + 1;
+  sh.getRange(r, 1, 1, values.length).setNumberFormat('@').setValues([values]);
+}
 
 function sheet_(name) {
   const sh = SpreadsheetApp.getActive().getSheetByName(name);
