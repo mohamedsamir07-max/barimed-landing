@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بلاك ميد | Black Med — دعم المناعة</title>
+<meta name="description" content="بلاك ميد مكمل غذائي بكبسولات جيلاتينية رخوة لدعم صحة جهاز المناعة — زيت حبة البركة وفيتامين سي وفيتامين د والزنك. شحن مجاني لكل مصر.">
+<meta property="og:title" content="بلاك ميد | Black Med">
+<meta property="og:description" content="تركيبة متكاملة لدعم المناعة — 60 كبسولة. شحن مجاني.">
+<meta property="og:image" content="https://files.easy-orders.net/1787047255785219936.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<script>
+/* ================== الإعدادات — عدّل هنا بس ================== */
+window.CONFIG = {
+  API_URL: 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE', // رابط الـ Web App من Apps Script
+  CLIENT_ID: 'barimed',            // لازم يطابق client_id في شيت Products
+  PRODUCT_ID: 'blackmed',          // لازم يطابق product_id في شيت Products
+  PRODUCT_NAME: 'بلاك ميد',
+  PRICE: 450,                      // للعرض بس — السعر الحقيقي بيتحسب من الشيت
+  SHIPPING: 0,
+  CURRENCY: 'ج.م',
+  META_PIXEL_ID: '',               // حط رقم البيكسل لو عاوز تتبع Purchase
+  DRIVE_VIDEO_ID: '1_A8sGRiVvucPZ7Tv3c3nJgCzvfXdff31' // فيديو "بلاك ميد-1.mp4" من الدرايف
+};
+</script>
+
+<style>
+  :root{
+    --ink:#14201b; --muted:#5d6b64; --bg:#ffffff; --soft:#f4f7f5;
+    --brand:#0f2e22; --brand-2:#1d4d39; --gold:#c9a24a; --line:#e3e9e5;
+    --ok:#1f8a4c; --err:#c0392b; --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Cairo',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.7;padding-bottom:84px}
+  img{max-width:100%;display:block}
+  .wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+  /* شريط العروض */
+  .announce{background:var(--brand);color:#fff;font-size:14px;font-weight:600;overflow:hidden;white-space:nowrap;direction:ltr}
+  .announce .track{display:inline-flex;padding:9px 0;animation:marq 24s linear infinite}
+  .announce span{direction:rtl;padding:0 24px}
+  .announce span::before{content:"✦";color:var(--gold);margin-inline-end:10px}
+  @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){.announce .track{animation:none}}
+
+  header{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:20}
+  header .wrap{display:flex;align-items:center;justify-content:center;height:64px}
+  header img{height:44px;width:auto}
+
+  /* السلايدر */
+  .slider{position:relative;margin-top:16px;border-radius:var(--radius);overflow:hidden;background:var(--soft);aspect-ratio:1/1}
+  .slides{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .slides::-webkit-scrollbar{display:none}
+  .slides img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;scroll-snap-align:center}
+  .dots{position:absolute;bottom:10px;inset-inline:0;display:flex;justify-content:center;gap:6px}
+  .dots button{width:8px;height:8px;border-radius:99px;border:0;background:#ffffff99;cursor:pointer;transition:.2s}
+  .dots button.on{width:22px;background:var(--gold)}
+
+  .title{margin-top:18px}
+  .title h1{font-size:26px;font-weight:800;line-height:1.3}
+  .price{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+  .price b{font-size:28px;color:var(--brand-2);font-weight:800}
+  .badge{display:inline-block;background:#e9f5ee;color:var(--ok);font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px}
+
+  .cta{display:block;width:100%;text-align:center;background:var(--brand);color:#fff;border:0;border-radius:12px;
+       font:800 18px 'Cairo',sans-serif;padding:15px;margin-top:16px;cursor:pointer;text-decoration:none;
+       box-shadow:0 6px 18px #0f2e2233;transition:transform .15s}
+  .cta:active{transform:scale(.98)}
+  .cta[disabled]{opacity:.6;cursor:wait}
+
+  section{margin-top:34px}
+  h2{font-size:22px;font-weight:800;margin-bottom:10px;line-height:1.4}
+  h2 small{display:block;font-size:15px;font-weight:600;color:var(--gold)}
+  p.lead{color:var(--muted);font-size:16px}
+
+  .ingredients{display:grid;gap:14px;margin-top:16px}
+  .ing{display:flex;gap:14px;align-items:center;background:var(--soft);border-radius:var(--radius);padding:10px}
+  .ing img{width:96px;height:96px;object-fit:cover;border-radius:10px;flex:0 0 96px}
+  .ing h3{font-size:17px;font-weight:800}
+  .ing p{font-size:14px;color:var(--muted)}
+
+  .video{position:relative;border-radius:var(--radius);overflow:hidden;background:#000;aspect-ratio:9/16;max-height:80vh;margin:14px auto 0}
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  .reviews{display:grid;gap:12px;margin-top:14px}
+  .review{border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+  .review .stars{color:var(--gold);letter-spacing:2px}
+  .review b{display:block;margin-top:2px}
+  .review p{color:var(--muted);font-size:15px}
+
+  /* فورم الطلب */
+  .order{background:var(--soft);border:2px solid var(--brand);border-radius:18px;padding:20px 16px;margin-top:34px;scroll-margin-top:80px}
+  .order h2{text-align:center}
+  .field{margin-top:12px}
+  .field label{display:block;font-weight:700;font-size:15px;margin-bottom:4px}
+  .field input,.field select,.field textarea{width:100%;font:600 16px 'Cairo',sans-serif;padding:12px 14px;border:1.5px solid var(--line);
+       border-radius:10px;background:#fff;color:var(--ink);outline:none;transition:border-color .15s}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand-2)}
+  .field.bad input,.field.bad select,.field.bad textarea{border-color:var(--err)}
+  .field .msg{color:var(--err);font-size:13px;min-height:0}
+  .qty{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-weight:700}
+  .stepper{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
+  .stepper button{width:44px;height:44px;border:0;background:#fff;font:800 22px 'Cairo';cursor:pointer;color:var(--brand)}
+  .stepper output{min-width:44px;text-align:center;font-weight:800;font-size:18px}
+  .summary{margin-top:14px;background:#fff;border-radius:10px;padding:12px 14px}
+  .summary div{display:flex;justify-content:space-between;padding:3px 0}
+  .summary .total{border-top:1px dashed var(--line);margin-top:6px;padding-top:8px;font-weight:800;font-size:18px}
+  .form-error{color:var(--err);font-weight:700;text-align:center;margin-top:10px}
+
+  .done{display:none;text-align:center;padding:10px 0}
+  .done .check{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;font-size:34px;line-height:64px;margin:0 auto 10px}
+  .done strong{display:block;font-size:20px;margin-top:4px}
+
+  .sticky{position:fixed;inset-inline:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px;z-index:30;transition:transform .2s}
+  .sticky .cta{margin:0 auto;max-width:528px}
+  .sticky.hide{transform:translateY(110%)}
+
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 10px}
+</style>
+</head>
+<body>
+
+<div class="announce" aria-label="عروض">
+  <div class="track">
+    <span>عروض حصرية على منتجات باري ميد — شحن مجاني لكل مصر</span>
+    <span>عروض حصرية على منتجات باري ميد — شحن مجاني لكل مصر</span>
+    <span>عروض حصرية على منتجات باري ميد — شحن مجاني لكل مصر</span>
+    <span>عروض حصرية على منتجات باري ميد — شحن مجاني لكل مصر</span>
+  </div>
+</div>
+
+<header><div class="wrap"><img src="https://files.easy-orders.net/1786961738171380992.jpg" alt="Barimed"></div></header>
+
+<main class="wrap">
+
+  <div class="slider" aria-label="صور المنتج">
+    <div class="slides" id="slides">
+      <img src="https://files.easy-orders.net/1787059029622672308.jpeg" alt="بلاك ميد">
+      <img src="https://files.easy-orders.net/1787049689228466394.jpeg" alt="بلاك ميد" loading="lazy">
+      <img src="https://files.easy-orders.net/1787049696217220442.jpeg" alt="بلاك ميد" loading="lazy">
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <div class="title">
+    <h1>بلاك ميد | Black Med</h1>
+    <div class="price"><b><span id="unitPrice">450</span> ج.م</b> <span class="badge">شحن مجاني</span></div>
+    <a href="#order" class="cta">اضغط هنا للشراء</a>
+  </div>
+
+  <section>
+    <h2>بلاك ميد لدعم المناعة</h2>
+    <p class="lead">مكمل غذائي بكبسولات جيلاتينية رخوة عالية الجودة بيدعم صحة الجهاز المناعي. العلبة فيها 60 كبسولة.</p>
+  </section>
+
+  <section>
+    <h2>تركيبة متكاملة لدعم المناعة<small>4 مكونات مختارة بتوازن لصحة المناعة والجسم</small></h2>
+    <div class="ingredients">
+      <div class="ing"><img src="https://files.easy-orders.net/1787056865242062751.jpg" alt="زيت حبة البركة" loading="lazy">
+        <div><h3>زيت حبة البركة</h3><p>مكون طبيعي معروف بدعمه لوظائف المناعة والصحة العامة.</p></div></div>
+      <div class="ing"><img src="https://files.easy-orders.net/1787056925057534957.jpg" alt="فيتامين سي" loading="lazy">
+        <div><h3>فيتامين سي</h3><p>بيدعم الوظيفة الطبيعية للمناعة ويساعد في حماية الخلايا من الإجهاد التأكسدي.</p></div></div>
+      <div class="ing"><img src="https://files.easy-orders.net/1787056974950943651.jpg" alt="فيتامين د" loading="lazy">
+        <div><h3>فيتامين د</h3><p>بيدعم الوظيفة الطبيعية لجهاز المناعة وصحة الجسم بشكل عام.</p></div></div>
+      <div class="ing"><img src="https://files.easy-orders.net/1787057276745378722.jpg" alt="الزنك" loading="lazy">
+        <div><h3>الزنك</h3><p>معدن أساسي للمناعة والصحة العامة.</p></div></div>
+    </div>
+    <a href="#order" class="cta">اطلب بلاك ميد دلوقتي</a>
+  </section>
+
+  <section>
+    <h2>اكتشف قوة تركيبة بلاك ميد ▶️</h2>
+    <p class="lead">تركيبة بتجمع زيت حبة البركة مع فيتامين سي وفيتامين د والزنك لدعم المناعة والصحة.</p>
+    <div class="video" id="video"></div>
+  </section>
+
+  <section>
+    <h2>آراء عملائنا</h2>
+    <div class="reviews">
+      <div class="review"><div class="stars">★★★★★</div><b>شريف جمال</b><p>عملي وسهل في الاستخدام، وبيجمع كذا مكون مهم في كبسولة واحدة.</p></div>
+      <div class="review"><div class="stars">★★★★★</div><b>منى عمر</b><p>الصيدلي رشحهولي، وبقى جزء من روتيني اليومي خصوصاً مع تغيير الفصول.</p></div>
+      <div class="review"><div class="stars">★★★★★</div><b>آية محمد</b><p>عجبني إن فيه زيت حبة البركة مع الفيتامينات والمعادن. التغليف حلو والتوصيل كان سريع.</p></div>
+    </div>
+  </section>
+
+  <form class="order" id="order" novalidate>
+    <div id="formBody">
+      <h2>من فضلك أدخل بياناتك لإتمام الطلب</h2>
+
+      <div class="field" data-f="name"><label for="f-name">الاسم بالكامل</label>
+        <input id="f-name" name="name" autocomplete="name" placeholder="مثال: محمد أحمد" required><div class="msg"></div></div>
+
+      <div class="field" data-f="phone"><label for="f-phone">رقم الموبايل</label>
+        <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx" dir="ltr" style="text-align:right" required><div class="msg"></div></div>
+
+      <div class="field" data-f="governorate"><label for="f-gov">المحافظة</label>
+        <select id="f-gov" name="governorate" required><option value="">اختار المحافظة</option></select><div class="msg"></div></div>
+
+      <div class="field" data-f="address"><label for="f-address">العنوان بالتفصيل</label>
+        <textarea id="f-address" name="address" rows="2" placeholder="المنطقة — الشارع — رقم العمارة — علامة مميزة" required></textarea><div class="msg"></div></div>
+
+      <div class="qty"><span>الكمية</span>
+        <div class="stepper"><button type="button" id="plus" aria-label="زيادة">+</button><output id="qty">1</output><button type="button" id="minus" aria-label="تقليل">−</button></div>
+      </div>
+
+      <div class="summary">
+        <div><span>المنتج</span><span id="sumSub"></span></div>
+        <div><span>الشحن</span><span id="sumShip"></span></div>
+        <div class="total"><span>الإجمالي</span><span id="sumTotal"></span></div>
+      </div>
+
+      <button class="cta" type="submit" id="submitBtn">اضغط هنا للشراء</button>
+      <div class="form-error" id="formError" role="alert"></div>
+    </div>
+
+    <div class="done" id="done">
+      <div class="check">✓</div>
+      <h2>تم استلام طلبك بنجاح</h2>
+      <p class="lead">هنتواصل معاك قريب لتأكيد الطلب.</p>
+      <strong>رقم الطلب: <span id="orderId"></span></strong>
+    </div>
+  </form>
+
+  <footer>© باري ميد — جميع الحقوق محفوظة</footer>
+</main>
+
+<div class="sticky" id="sticky"><a href="#order" class="cta">اطلب الآن — <span id="stickyPrice">450</span> ج.م</a></div>
+
+<script>
+(function(){
+  const C = window.CONFIG;
+  const $ = (s) => document.querySelector(s);
+  const money = (n) => n.toLocaleString('ar-EG') + ' ' + C.CURRENCY;
+
+  // ===== Meta Pixel (اختياري) =====
+  if (C.META_PIXEL_ID) {
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', C.META_PIXEL_ID); fbq('track','PageView');
+    fbq('track','ViewContent',{content_ids:[C.PRODUCT_ID],content_type:'product',value:C.PRICE,currency:'EGP'});
+  }
+  const track = (ev, data) => { try { window.fbq && fbq('track', ev, data); } catch(e){} };
+
+  // ===== السلايدر =====
+  const slides = $('#slides'), dots = $('#dots'), n = slides.children.length;
+  for (let i = 0; i < n; i++) {
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label','صورة '+(i+1));
+    b.onclick = () => go(i); dots.appendChild(b);
+  }
+  let cur = 0;
+  function go(i){ cur = (i + n) % n; slides.scrollTo({left: -cur * slides.clientWidth, behavior:'smooth'}); paint(); }
+  function paint(){ [...dots.children].forEach((d,j)=>d.classList.toggle('on', j===cur)); }
+  slides.addEventListener('scroll', () => { cur = Math.round(Math.abs(slides.scrollLeft) / slides.clientWidth); paint(); }, {passive:true});
+  let auto = setInterval(() => go(cur + 1), 4000);
+  slides.addEventListener('pointerdown', () => clearInterval(auto), {once:true});
+  paint();
+
+  // ===== الفيديو من الدرايف =====
+  if (C.DRIVE_VIDEO_ID) {
+    $('#video').innerHTML = '<iframe src="https://drive.google.com/file/d/' + C.DRIVE_VIDEO_ID +
+      '/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="فيديو بلاك ميد"></iframe>';
+  } else { $('#video').closest('section').remove(); }
+
+  // ===== المحافظات =====
+  const govs = ['القاهرة','الجيزة','الإسكندرية','القليوبية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط',
+    'بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر',
+    'الوادي الجديد','مطروح','شمال سيناء','جنوب سيناء'];
+  $('#f-gov').insertAdjacentHTML('beforeend', govs.map(g => `<option>${g}</option>`).join(''));
+
+  // ===== الكمية والملخص =====
+  let qty = 1;
+  function render(){
+    $('#qty').textContent = qty;
+    const sub = C.PRICE * qty;
+    $('#unitPrice').textContent = C.PRICE.toLocaleString('ar-EG');
+    $('#stickyPrice').textContent = C.PRICE.toLocaleString('ar-EG');
+    $('#sumSub').textContent = qty + ' × ' + money(C.PRICE);
+    $('#sumShip').textContent = C.SHIPPING ? money(C.SHIPPING) : 'مجاني';
+    $('#sumTotal').textContent = money(sub + C.SHIPPING);
+  }
+  $('#plus').onclick = () => { qty = Math.min(10, qty + 1); render(); };
+  $('#minus').onclick = () => { qty = Math.max(1, qty - 1); render(); };
+  render();
+
+  // ===== إخفاء الزرار الثابت لما الفورم يظهر =====
+  new IntersectionObserver(([e]) => $('#sticky').classList.toggle('hide', e.isIntersecting), {threshold:.15}).observe($('#order'));
+  let checkoutTracked = false;
+  $('#order').addEventListener('focusin', () => { if (!checkoutTracked){ checkoutTracked = true; track('InitiateCheckout',{value:C.PRICE*qty,currency:'EGP'}); } });
+
+  // ===== التحقق والإرسال =====
+  const normPhone = (v) => {
+    let s = String(v).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g,'');
+    if (s.startsWith('0020')) s = s.slice(4); else if (s.startsWith('20') && s.length === 12) s = s.slice(2);
+    if (s.length === 10 && s[0] === '1') s = '0' + s;
+    return s;
+  };
+  function setErr(f, msg){ const el = document.querySelector(`.field[data-f="${f}"]`); if(!el) return;
+    el.classList.toggle('bad', !!msg); el.querySelector('.msg').textContent = msg || ''; }
+  function validate(d){
+    const e = {};
+    if (d.name.trim().length < 3) e.name = 'اكتب اسمك بالكامل';
+    if (!/^01[0125]\d{8}$/.test(d.phone)) e.phone = 'رقم الموبايل لازم يكون 11 رقم ويبدأ بـ 01';
+    if (!d.governorate) e.governorate = 'اختار المحافظة';
+    if (d.address.trim().length < 5) e.address = 'اكتب العنوان بالتفصيل';
+    ['name','phone','governorate','address'].forEach(f => setErr(f, e[f]));
+    return e;
+  }
+
+  document.querySelectorAll('.field').forEach(el => el.addEventListener('input', () => setErr(el.dataset.f, '')));
+  document.querySelectorAll('.field select').forEach(el => el.addEventListener('change', () => setErr(el.closest('.field').dataset.f, '')));
+
+  const params = new URLSearchParams(location.search);
+  $('#order').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const f = ev.target;
+    const data = {
+      action:'order', client_id:C.CLIENT_ID, product_id:C.PRODUCT_ID, qty,
+      name:f.name.value, phone:normPhone(f.phone.value), governorate:f.governorate.value, address:f.address.value,
+      utm_source:params.get('utm_source')||'', utm_campaign:params.get('utm_campaign')||'',
+      utm_content:params.get('utm_content')||'', page_url:location.href.split('#')[0]
+    };
+    const errs = validate(data);
+    $('#formError').textContent = '';
+    if (Object.keys(errs).length) { document.querySelector('.field.bad input, .field.bad select, .field.bad textarea')?.focus(); return; }
+
+    const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'جاري إرسال الطلب...';
+    try {
+      const res = await fetch(C.API_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(data) });
+      const out = await res.json();
+      if (out.ok) {
+        $('#orderId').textContent = out.order_id;
+        $('#formBody').style.display = 'none'; $('#done').style.display = 'block';
+        $('#order').scrollIntoView({behavior:'smooth', block:'center'});
+        if (!out.duplicate) track('Purchase', {value: out.total, currency:'EGP', content_ids:[C.PRODUCT_ID], content_type:'product', num_items: qty});
+      } else if (out.error === 'validation') {
+        Object.entries(out.fields || {}).forEach(([k,v]) => setErr(k, v));
+        $('#formError').textContent = 'راجع البيانات المكتوبة باللون الأحمر';
+      } else { throw new Error(out.error); }
+    } catch (e) {
+      $('#formError').textContent = 'حصلت مشكلة في الإرسال — جرّب تاني بعد لحظات.';
+    } finally { btn.disabled = false; btn.textContent = 'اضغط هنا للشراء'; }
+  });
+})();
+</script>
+</body>
+</html>

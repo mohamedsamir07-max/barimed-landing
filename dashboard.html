@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة الأوردرات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script>
+  // نفس رابط الـ Web App اللي في صفحة الهبوط
+  window.API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+</script>
+<style>
+  :root{--ink:#14201b;--muted:#6b7872;--bg:#f3f6f4;--card:#fff;--line:#e2e8e4;--brand:#0f2e22;--brand-2:#1d4d39;--gold:#c9a24a;
+        --new:#2563eb;--ok:#1f8a4c;--ship:#7c3aed;--done:#0f766e;--bad:#c0392b;--wait:#b7791f;--ret:#6b7280}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Cairo',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+  button,input,select,textarea{font:inherit;color:inherit}
+  .hidden{display:none!important}
+
+  /* تسجيل الدخول */
+  #login{min-height:100vh;display:grid;place-items:center;padding:20px}
+  .login-card{background:var(--card);width:100%;max-width:380px;border-radius:18px;padding:28px 24px;box-shadow:0 10px 40px #0f2e2214}
+  .login-card h1{font-size:22px;font-weight:800;text-align:center}
+  .login-card p{color:var(--muted);text-align:center;margin-bottom:16px}
+  .login-card label{display:block;font-weight:700;margin-top:12px;margin-bottom:4px}
+  .login-card input{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;outline:none}
+  .login-card input:focus{border-color:var(--brand-2)}
+  .btn{background:var(--brand);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
+  .btn.block{width:100%;padding:13px;margin-top:18px;font-size:16px}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn[disabled]{opacity:.6;cursor:wait}
+  .err{color:var(--bad);font-weight:700;text-align:center;margin-top:10px;min-height:1em}
+
+  /* اللوحة */
+  .top{background:var(--brand);color:#fff}
+  .top .in{max-width:1200px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .top h1{font-size:18px;font-weight:800;flex:1}
+  .top h1 small{display:block;font-size:13px;font-weight:600;color:#ffffffb0}
+  .top .btn{background:#ffffff1a;border:1px solid #ffffff33}
+  main{max-width:1200px;margin:0 auto;padding:16px}
+
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card);border-radius:14px;padding:10px;border:1px solid var(--line)}
+  .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .seg button{border:0;background:#fff;padding:8px 14px;cursor:pointer;font-weight:700}
+  .seg button.on{background:var(--brand);color:#fff}
+  .day{display:flex;align-items:center;gap:4px}
+  .day button{width:36px;height:38px;border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;font-weight:800}
+  .bar input[type=date]{padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .bar input[type=search]{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--line);border-radius:10px}
+  .sep{flex:1}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .stat span{color:var(--muted);font-size:13px;font-weight:700}
+  .stat b{display:block;font-size:24px;font-weight:800}
+
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;cursor:pointer;font-weight:700;font-size:14px}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .chip i{font-style:normal;opacity:.7;margin-inline-start:4px}
+
+  .days{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:auto}
+  .days table{width:100%;border-collapse:collapse;font-size:14px}
+  .days th,.days td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  .days th{background:#f8faf9;color:var(--muted)}
+  .days tr[data-day]{cursor:pointer}
+  .days tr[data-day]:hover{background:#f8faf9}
+
+  .list{margin-top:12px;display:grid;gap:10px}
+  .order{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;
+         grid-template-columns:110px 1.3fr 1.6fr 1fr 170px;gap:12px;align-items:start}
+  .order .id b{display:block;font-weight:800}
+  .order .id span,.order .muted{color:var(--muted);font-size:13px}
+  .order .who b{display:block}
+  .order .who a{color:var(--brand-2);font-weight:700;text-decoration:none;direction:ltr;display:inline-block}
+  .order .who .acts a{font-size:13px;margin-inline-end:10px}
+  .order .money b{font-size:17px;font-weight:800}
+  .order select{width:100%;padding:7px 10px;border-radius:10px;border:1.5px solid var(--line);font-weight:800;background:#fff;cursor:pointer}
+  .order textarea{width:100%;margin-top:6px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;resize:vertical;min-height:34px}
+  .saved{font-size:12px;color:var(--ok);font-weight:700;min-height:1em}
+  .empty{text-align:center;color:var(--muted);padding:40px 10px;background:var(--card);border-radius:14px;border:1px dashed var(--line)}
+  .loading{opacity:.5;pointer-events:none}
+
+  .order .id span{display:block}
+  @media (max-width:700px){
+    .seg{width:100%;overflow-x:auto}
+    .seg button{flex:1;white-space:nowrap}
+    .day{width:100%}
+    .day input[type=date]{flex:1;min-width:0}
+    .bar input[type=search]{min-width:0;width:100%}
+    #csv{width:100%}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:860px){
+    .order{grid-template-columns:1fr 1fr}
+    .order .addr{grid-column:1/-1}
+    .order .st{grid-column:1/-1}
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== تسجيل الدخول ========== -->
+<section id="login">
+  <form class="login-card" id="loginForm">
+    <h1>لوحة الأوردرات</h1>
+    <p>ادخل بالبيانات اللي اتبعتتلك</p>
+    <label for="u">اسم المستخدم</label>
+    <input id="u" autocomplete="username" dir="ltr" required>
+    <label for="p">الباسوورد</label>
+    <input id="p" type="password" autocomplete="current-password" dir="ltr" required>
+    <button class="btn block" id="loginBtn">دخول</button>
+    <div class="err" id="loginErr" role="alert"></div>
+  </form>
+</section>
+
+<!-- ========== اللوحة ========== -->
+<section id="app" class="hidden">
+  <div class="top"><div class="in">
+    <h1 id="hello">أهلاً<small id="rangeLabel"></small></h1>
+    <button class="btn" id="refresh">تحديث ↻</button>
+    <button class="btn" id="logout">خروج</button>
+  </div></div>
+
+  <main>
+    <div class="bar">
+      <div class="seg" id="modes">
+        <button data-m="today" class="on">النهارده</button>
+        <button data-m="yesterday">امبارح</button>
+        <button data-m="7">آخر 7 أيام</button>
+        <button data-m="30">آخر 30 يوم</button>
+      </div>
+      <div class="day">
+        <button id="next" title="اليوم اللي بعده">›</button>
+        <input type="date" id="from" aria-label="من">
+        <span>إلى</span>
+        <input type="date" id="to" aria-label="إلى">
+        <button id="prev" title="اليوم اللي قبله">‹</button>
+      </div>
+      <input type="search" id="q" placeholder="بحث بالاسم، الموبايل، رقم الأوردر، المحافظة...">
+      <button class="btn ghost" id="csv">تصدير Excel</button>
+    </div>
+
+    <div class="stats" id="stats"></div>
+    <div class="chips" id="chips"></div>
+    <div class="days hidden" id="days"></div>
+    <div class="list" id="list"></div>
+  </main>
+</section>
+
+<script>
+(function(){
+  const API = window.API_URL;
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const num = (v) => Number(String(v).replace(/[^\d.]/g,'')) || 0;
+  const money = (n) => n.toLocaleString('ar-EG') + ' ج.م';
+  const COLORS = {'جديد':'--new','مؤكد':'--ok','تم الشحن':'--ship','تم التسليم':'--done','ملغي':'--bad','لم يرد':'--wait','مرتجع':'--ret'};
+
+  // تاريخ القاهرة بصيغة yyyy-mm-dd
+  const cairo = (d) => new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);
+  const shift = (iso, days) => { const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0,10); };
+  const dayName = (iso) => new Date(iso + 'T12:00:00Z').toLocaleDateString('ar-EG',{weekday:'long', day:'numeric', month:'long', timeZone:'UTC'});
+
+  let token = null, user = null, orders = [], statuses = [], filter = 'الكل', range = {};
+  try { token = sessionStorage.getItem('eo_token'); user = JSON.parse(sessionStorage.getItem('eo_user') || 'null'); } catch(e){}
+
+  async function api(body){
+    const r = await fetch(API, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body)});
+    const out = await r.json();
+    if (out.error === 'unauthorized') { signOut(); throw new Error('unauthorized'); }
+    return out;
+  }
+
+  // ===== دخول / خروج =====
+  $('#loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('#loginBtn'); btn.disabled = true; $('#loginErr').textContent = '';
+    try {
+      const out = await api({action:'login', username: $('#u').value.trim(), password: $('#p').value});
+      if (!out.ok) {
+        $('#loginErr').textContent = out.error === 'locked' ? 'محاولات كتير غلط — جرّب بعد 15 دقيقة' : 'اسم المستخدم أو الباسوورد غلط';
+        return;
+      }
+      token = out.token; user = out.user;
+      try { sessionStorage.setItem('eo_token', token); sessionStorage.setItem('eo_user', JSON.stringify(user)); } catch(e){}
+      start();
+    } catch(err) { $('#loginErr').textContent = 'مش قادر أوصل للسيرفر — اتأكد من الإنترنت'; }
+    finally { btn.disabled = false; }
+  });
+
+  function signOut(){
+    if (token) api({action:'logout', token}).catch(()=>{});
+    token = null; user = null;
+    try { sessionStorage.removeItem('eo_token'); sessionStorage.removeItem('eo_user'); } catch(e){}
+    $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); $('#p').value = '';
+  }
+  $('#logout').onclick = signOut;
+
+  // ===== الفترة =====
+  function setRange(from, to, mode){
+    if (to < from) [from, to] = [to, from];
+    range = {from, to};
+    $('#from').value = from; $('#to').value = to;
+    document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('on', b.dataset.m === mode));
+    load();
+  }
+  document.querySelectorAll('#modes button').forEach(b => b.onclick = () => {
+    const t = cairo(new Date()), m = b.dataset.m;
+    if (m === 'today') setRange(t, t, m);
+    else if (m === 'yesterday') setRange(shift(t,-1), shift(t,-1), m);
+    else setRange(shift(t, -(+m - 1)), t, m);
+  });
+  $('#prev').onclick = () => { const d = shift(range.from, -1); setRange(d, d); };
+  $('#next').onclick = () => { const d = shift(range.to, 1); setRange(d, d); };
+  $('#from').onchange = () => setRange($('#from').value, $('#to').value < $('#from').value ? $('#from').value : $('#to').value);
+  $('#to').onchange = () => setRange($('#from').value, $('#to').value);
+  $('#refresh').onclick = () => load();
+  $('#q').oninput = () => render();
+
+  // ===== تحميل الأوردرات =====
+  async function load(){
+    $('#list').classList.add('loading');
+    try {
+      const out = await api({action:'orders', token, from: range.from, to: range.to});
+      if (!out.ok) throw new Error(out.error);
+      orders = out.orders; statuses = out.statuses;
+      $('#rangeLabel').textContent = range.from === range.to ? dayName(range.from) : (dayName(range.from) + ' ← ' + dayName(range.to));
+      render();
+    } catch(e) {
+      if (e.message !== 'unauthorized') $('#list').innerHTML = '<div class="empty">مش قادر أحمّل الأوردرات — دوس تحديث</div>';
+    } finally { $('#list').classList.remove('loading'); }
+  }
+
+  function visible(){
+    const q = $('#q').value.trim().toLowerCase();
+    return orders.filter(o => (filter === 'الكل' || o.status === filter) &&
+      (!q || [o.order_id,o.name,o.phone,o.phone2,o.governorate,o.address,o.product].join(' ').toLowerCase().includes(q)));
+  }
+
+  function render(){
+    // الإحصائيات
+    const active = orders.filter(o => !['ملغي','مرتجع'].includes(o.status));
+    const count = (s) => orders.filter(o => o.status === s).length;
+    $('#stats').innerHTML = [
+      ['عدد الأوردرات', orders.length.toLocaleString('ar-EG')],
+      ['إجمالي المبيعات (بدون الملغي)', money(active.reduce((a,o)=>a+num(o.total),0))],
+      ['عدد القطع', active.reduce((a,o)=>a+num(o.qty),0).toLocaleString('ar-EG')],
+      ['جديد', count('جديد').toLocaleString('ar-EG')],
+      ['مؤكد', count('مؤكد').toLocaleString('ar-EG')],
+      ['نسبة التأكيد', orders.length ? Math.round((orders.length - count('جديد') - count('ملغي') - count('لم يرد')) / orders.length * 100) + '%' : '—'],
+    ].map(([k,v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join('');
+
+    // فلاتر الحالة
+    $('#chips').innerHTML = ['الكل', ...statuses].map(s =>
+      `<button class="chip ${s===filter?'on':''}" data-s="${esc(s)}">${esc(s)}<i>${s==='الكل'?orders.length:count(s)}</i></button>`).join('');
+    document.querySelectorAll('.chip').forEach(c => c.onclick = () => { filter = c.dataset.s; render(); });
+
+    // ملخص يومي لو الفترة أكتر من يوم
+    const multi = range.from !== range.to;
+    $('#days').classList.toggle('hidden', !multi);
+    if (multi) {
+      const by = {};
+      orders.forEach(o => { const d = by[o.date] ||= {n:0, total:0, ok:0, cancel:0};
+        d.n++; if (!['ملغي','مرتجع'].includes(o.status)) d.total += num(o.total);
+        if (['مؤكد','تم الشحن','تم التسليم'].includes(o.status)) d.ok++; if (o.status==='ملغي') d.cancel++; });
+      const rows = Object.keys(by).sort().reverse().map(d =>
+        `<tr data-day="${d}"><td>${dayName(d)}</td><td>${by[d].n}</td><td>${by[d].ok}</td><td>${by[d].cancel}</td><td>${money(by[d].total)}</td></tr>`).join('');
+      $('#days').innerHTML = `<table><thead><tr><th>اليوم</th><th>أوردرات</th><th>مؤكد/مشحون</th><th>ملغي</th><th>المبيعات</th></tr></thead><tbody>${rows ||
+        '<tr><td colspan="5">لا يوجد</td></tr>'}</tbody></table>`;
+      document.querySelectorAll('#days tr[data-day]').forEach(tr => tr.onclick = () => setRange(tr.dataset.day, tr.dataset.day));
+    }
+
+    // الأوردرات
+    const list = visible();
+    if (!list.length) { $('#list').innerHTML = '<div class="empty">مفيش أوردرات في الفترة دي</div>'; return; }
+    $('#list').innerHTML = list.map(o => {
+      const wa = '2' + o.phone; // 01xxxxxxxxx → 201xxxxxxxxx
+      const opts = statuses.map(s => `<option ${s===o.status?'selected':''}>${esc(s)}</option>`).join('');
+      const color = `var(${COLORS[o.status] || '--muted'})`;
+      return `<div class="order" data-id="${esc(o.order_id)}">
+        <div class="id"><b>${esc(o.order_id)}</b><span>${esc(o.date)}</span><span>الساعة ${esc(o.created_at.slice(11,16))}</span></div>
+        <div class="who"><b>${esc(o.name)}</b><a href="tel:${esc(o.phone)}">${esc(o.phone)}</a>
+          <div class="acts"><a href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">واتساب</a><a href="tel:${esc(o.phone)}">اتصال</a></div></div>
+        <div class="addr"><b>${esc(o.governorate)}</b><div class="muted">${esc(o.address)}</div>${o.notes?`<div class="muted">ملاحظة: ${esc(o.notes)}</div>`:''}</div>
+        <div class="money"><b>${money(num(o.total))}</b><div class="muted">${esc(o.product)} × ${esc(o.qty)}</div>
+          ${o.utm_campaign?`<div class="muted">${esc(o.utm_campaign)}</div>`:''}</div>
+        <div class="st"><select style="color:${color};border-color:${color}">${opts}</select>
+          <textarea placeholder="ملاحظة داخلية...">${esc(o.admin_note)}</textarea><div class="saved"></div></div>
+      </div>`;
+    }).join('');
+
+    document.querySelectorAll('.order').forEach(card => {
+      const id = card.dataset.id, sel = card.querySelector('select'), note = card.querySelector('textarea'), saved = card.querySelector('.saved');
+      const save = async (patch) => {
+        saved.style.color = ''; saved.textContent = 'جاري الحفظ...';
+        try {
+          const out = await api({action:'update', token, order_id:id, ...patch});
+          if (!out.ok) throw new Error(out.error);
+          const o = orders.find(x => x.order_id === id); Object.assign(o, patch);
+          saved.textContent = 'اتحفظ ✓';
+          if (patch.status) render();
+        } catch(e) { saved.textContent = ''; saved.style.color = 'var(--bad)'; saved.textContent = 'ماتحفظش — جرّب تاني'; }
+      };
+      sel.onchange = () => save({status: sel.value});
+      note.onchange = () => save({admin_note: note.value});
+    });
+  }
+
+  // ===== تصدير CSV (يفتح في Excel بالعربي) =====
+  $('#csv').onclick = () => {
+    const cols = [['order_id','رقم الأوردر'],['created_at','الوقت'],['name','الاسم'],['phone','الموبايل'],['governorate','المحافظة'],
+      ['address','العنوان'],['product','المنتج'],['qty','الكمية'],['total','الإجمالي'],['status','الحالة'],['admin_note','ملاحظة'],['utm_campaign','الحملة']];
+    const q = (v) => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+    const csv = '﻿' + [cols.map(c=>q(c[1])).join(','), ...visible().map(o => cols.map(c => q(c[0]==='phone' ? '\t'+o.phone : o[c[0]])).join(','))].join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+    a.download = `orders_${range.from}${range.to!==range.from?'_'+range.to:''}.csv`;
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  };
+
+  // تحديث تلقائي كل دقيقة لو الصفحة ظاهرة
+  setInterval(() => { if (token && !document.hidden && !document.activeElement.matches('textarea')) load(); }, 60000);
+
+  function start(){
+    $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+    $('#hello').firstChild.textContent = 'أهلاً ' + (user?.name || '');
+    const t = cairo(new Date()); setRange(t, t, 'today');
+  }
+  if (token) start();
+})();
+</script>
+</body>
+</html>
