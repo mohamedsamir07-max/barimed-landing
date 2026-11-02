@@ -8,6 +8,8 @@
 <meta property="og:title" content="بلاك ميد | Black Med">
 <meta property="og:description" content="تركيبة متكاملة لدعم المناعة — 60 كبسولة. شحن مجاني.">
 <meta property="og:image" content="https://files.easy-orders.net/1787047255785219936.jpeg">
+<link rel="preconnect" href="https://files.easy-orders.net">
+<link rel="preload" as="image" href="https://files.easy-orders.net/1787059029622672308.jpeg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -133,15 +135,15 @@ window.CONFIG = {
   </div>
 </div>
 
-<header><div class="wrap"><img src="https://files.easy-orders.net/1786961738171380992.jpg" alt="Barimed"></div></header>
+<header><div class="wrap"><img src="https://files.easy-orders.net/1786961738171380992.jpg" alt="Barimed" width="44" height="44" decoding="async"></div></header>
 
 <main class="wrap">
 
   <div class="slider" aria-label="صور المنتج">
     <div class="slides" id="slides">
-      <img src="https://files.easy-orders.net/1787059029622672308.jpeg" alt="بلاك ميد">
-      <img src="https://files.easy-orders.net/1787049689228466394.jpeg" alt="بلاك ميد" loading="lazy">
-      <img src="https://files.easy-orders.net/1787049696217220442.jpeg" alt="بلاك ميد" loading="lazy">
+      <img src="https://files.easy-orders.net/1787059029622672308.jpeg" alt="بلاك ميد" width="900" height="900" fetchpriority="high">
+      <img src="https://files.easy-orders.net/1787049689228466394.jpeg" alt="بلاك ميد" width="900" height="900" loading="lazy" decoding="async">
+      <img src="https://files.easy-orders.net/1787049696217220442.jpeg" alt="بلاك ميد" width="900" height="900" loading="lazy" decoding="async">
     </div>
     <div class="dots" id="dots"></div>
   </div>
@@ -160,13 +162,13 @@ window.CONFIG = {
   <section>
     <h2>تركيبة متكاملة لدعم المناعة<small>4 مكونات مختارة بتوازن لصحة المناعة والجسم</small></h2>
     <div class="ingredients">
-      <div class="ing"><img src="https://files.easy-orders.net/1787056865242062751.jpg" alt="زيت حبة البركة" loading="lazy">
+      <div class="ing"><img src="https://files.easy-orders.net/1787056865242062751.jpg" alt="زيت حبة البركة" width="96" height="96" loading="lazy" decoding="async">
         <div><h3>زيت حبة البركة</h3><p>مكون طبيعي معروف بدعمه لوظائف المناعة والصحة العامة.</p></div></div>
-      <div class="ing"><img src="https://files.easy-orders.net/1787056925057534957.jpg" alt="فيتامين سي" loading="lazy">
+      <div class="ing"><img src="https://files.easy-orders.net/1787056925057534957.jpg" alt="فيتامين سي" width="96" height="96" loading="lazy" decoding="async">
         <div><h3>فيتامين سي</h3><p>بيدعم الوظيفة الطبيعية للمناعة ويساعد في حماية الخلايا من الإجهاد التأكسدي.</p></div></div>
-      <div class="ing"><img src="https://files.easy-orders.net/1787056974950943651.jpg" alt="فيتامين د" loading="lazy">
+      <div class="ing"><img src="https://files.easy-orders.net/1787056974950943651.jpg" alt="فيتامين د" width="96" height="96" loading="lazy" decoding="async">
         <div><h3>فيتامين د</h3><p>بيدعم الوظيفة الطبيعية لجهاز المناعة وصحة الجسم بشكل عام.</p></div></div>
-      <div class="ing"><img src="https://files.easy-orders.net/1787057276745378722.jpg" alt="الزنك" loading="lazy">
+      <div class="ing"><img src="https://files.easy-orders.net/1787057276745378722.jpg" alt="الزنك" width="96" height="96" loading="lazy" decoding="async">
         <div><h3>الزنك</h3><p>معدن أساسي للمناعة والصحة العامة.</p></div></div>
     </div>
     <a href="#order" class="cta">اطلب بلاك ميد دلوقتي</a>
@@ -250,14 +252,16 @@ window.CONFIG = {
   const slides = $('#slides'), dots = $('#dots'), n = slides.children.length;
   for (let i = 0; i < n; i++) {
     const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label','صورة '+(i+1));
-    b.onclick = () => go(i); dots.appendChild(b);
+    b.onclick = () => { stopAuto(); go(i); }; dots.appendChild(b);
   }
+  function stopAuto(){ clearInterval(auto); }
   let cur = 0;
   function go(i){ cur = (i + n) % n; slides.scrollTo({left: -cur * slides.clientWidth, behavior:'smooth'}); paint(); }
   function paint(){ [...dots.children].forEach((d,j)=>d.classList.toggle('on', j===cur)); }
   slides.addEventListener('scroll', () => { cur = Math.round(Math.abs(slides.scrollLeft) / slides.clientWidth); paint(); }, {passive:true});
   let auto = setInterval(() => go(cur + 1), 4000);
-  slides.addEventListener('pointerdown', () => clearInterval(auto), {once:true});
+  slides.addEventListener('pointerdown', stopAuto);
+  slides.addEventListener('touchstart', stopAuto, {passive:true});
   paint();
 
   // ===== الفيديو من الدرايف =====

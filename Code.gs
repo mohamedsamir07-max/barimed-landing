@@ -119,6 +119,7 @@ function createOrder_(b) {
       page_url: clean_(b.page_url, 300),
     };
     appendText_(sh, HEADERS.Orders.map(h => asText_(row[h])));
+    SpreadsheetApp.flush();   // لازم قبل فك القفل عشان الطلب اللي بعده يشوف الصف ده (منع الدبل كليك)
     return { ok: true, order_id: orderId, total: total };
   } finally {
     lock.releaseLock();
@@ -171,6 +172,7 @@ function updateOrder_(b) {
       if (typeof b.admin_note === 'string') sh.getRange(rowNo, idx.admin_note + 1).setValue(asText_(clean_(b.admin_note, 300)));
       sh.getRange(rowNo, idx.updated_at + 1).setValue(fmt_(new Date(), 'yyyy-MM-dd HH:mm:ss'));
       sh.getRange(rowNo, idx.updated_by + 1).setValue(s.username);
+      SpreadsheetApp.flush();
       return { ok: true };
     }
     return { ok: false, error: 'not_found' };
