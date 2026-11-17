@@ -21,7 +21,14 @@ window.CONFIG = {
   CLIENT_ID: 'barimed',            // لازم يطابق client_id في شيت Products
   PRODUCT_ID: 'blackmed',          // لازم يطابق product_id في شيت Products
   PRODUCT_NAME: 'بلاك ميد',
-  PRICE: 450,                      // للعرض بس — السعر الحقيقي بيتحسب من الشيت
+  PRICE: 450,                      // للعرض بس — السعر الحقيقي بيتحسب من شيت Products
+  // العروض (للعرض بس — لازم تطابق شيت Products): qty = عدد العبوات، price = السعر الإجمالي
+  OFFERS: [
+    { qty: 1, price: 450,  label: 'عبوة واحدة' },
+    { qty: 2, price: 800,  label: 'عبوتين', badge: 'وفّر 100 ج.م' },
+    { qty: 3, price: 1000, label: '3 عبوات', badge: 'الأكثر طلبًا — وفّر 350 ج.م', best: true }
+  ],
+  DEFAULT_QTY: 1,
   SHIPPING: 0,
   CURRENCY: 'ج.م',
   META_PIXEL_ID: '',               // حط رقم البيكسل لو عاوز تتبع Purchase
@@ -104,10 +111,24 @@ window.CONFIG = {
   .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand-2)}
   .field.bad input,.field.bad select,.field.bad textarea{border-color:var(--err)}
   .field .msg{color:var(--err);font-size:13px;min-height:0}
-  .qty{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-weight:700}
-  .stepper{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
-  .stepper button{width:44px;height:44px;border:0;background:#fff;font:800 22px 'Cairo';cursor:pointer;color:var(--brand)}
-  .stepper output{min-width:44px;text-align:center;font-weight:800;font-size:18px}
+  .offers{margin-top:16px;border:0}
+  .offers legend{font-weight:800;font-size:16px;margin-bottom:6px}
+  .offer{position:relative;display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:12px;
+         padding:12px 14px;margin-top:8px;cursor:pointer;transition:border-color .15s, box-shadow .15s}
+  .offer input{position:absolute;opacity:0;pointer-events:none}
+  .offer .dot{flex:0 0 20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center}
+  .offer .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--brand);transform:scale(0);transition:transform .15s}
+  .offer .txt{flex:1}
+  .offer .txt b{display:block;font-size:16px}
+  .offer .txt small{color:var(--muted);font-size:13px}
+  .offer .pr{text-align:left;white-space:nowrap}
+  .offer .pr b{display:block;font-size:18px;color:var(--brand-2)}
+  .offer .pr s{color:var(--muted);font-size:13px}
+  .offer .tag{position:absolute;top:-10px;inset-inline-start:12px;background:var(--gold);color:#fff;font-size:12px;font-weight:800;padding:1px 10px;border-radius:99px}
+  .offer:has(input:checked){border-color:var(--brand);box-shadow:0 0 0 3px #0f2e2214}
+  .offer:has(input:checked) .dot{border-color:var(--brand)}
+  .offer:has(input:checked) .dot::after{transform:scale(1)}
+  .offer:has(input:focus-visible){outline:2px solid var(--brand-2);outline-offset:2px}
   .summary{margin-top:14px;background:#fff;border-radius:10px;padding:12px 14px}
   .summary div{display:flex;justify-content:space-between;padding:3px 0}
   .summary .total{border-top:1px dashed var(--line);margin-top:6px;padding-top:8px;font-weight:800;font-size:18px}
@@ -151,6 +172,7 @@ window.CONFIG = {
   <div class="title">
     <h1>بلاك ميد | Black Med</h1>
     <div class="price"><b><span id="unitPrice">450</span> ج.م</b> <span class="badge">شحن مجاني</span></div>
+    <p class="lead" id="offerHint" style="margin-top:4px">عبوتين بـ 800 ج.م • 3 عبوات بـ 1000 ج.م</p>
     <a href="#order" class="cta">اضغط هنا للشراء</a>
   </div>
 
@@ -192,6 +214,7 @@ window.CONFIG = {
   <form class="order" id="order" novalidate>
     <div id="formBody">
       <h2>من فضلك أدخل بياناتك لإتمام الطلب</h2>
+      <fieldset class="offers" id="offers"><legend>اختار العرض</legend></fieldset>
 
       <div class="field" data-f="name"><label for="f-name">الاسم بالكامل</label>
         <input id="f-name" name="name" autocomplete="name" placeholder="مثال: محمد أحمد" required><div class="msg"></div></div>
@@ -205,9 +228,6 @@ window.CONFIG = {
       <div class="field" data-f="address"><label for="f-address">العنوان بالتفصيل</label>
         <textarea id="f-address" name="address" rows="2" placeholder="المنطقة — الشارع — رقم العمارة — علامة مميزة" required></textarea><div class="msg"></div></div>
 
-      <div class="qty"><span>الكمية</span>
-        <div class="stepper"><button type="button" id="plus" aria-label="زيادة">+</button><output id="qty">1</output><button type="button" id="minus" aria-label="تقليل">−</button></div>
-      </div>
 
       <div class="summary">
         <div><span>المنتج</span><span id="sumSub"></span></div>
@@ -276,25 +296,34 @@ window.CONFIG = {
     'الوادي الجديد','مطروح','شمال سيناء','جنوب سيناء'];
   $('#f-gov').insertAdjacentHTML('beforeend', govs.map(g => `<option>${g}</option>`).join(''));
 
-  // ===== الكمية والملخص =====
-  let qty = 1;
+  // ===== العروض والملخص =====
+  const offers = (C.OFFERS && C.OFFERS.length) ? C.OFFERS : [{qty:1, price:C.PRICE, label:'عبوة واحدة'}];
+  const offerFor = (q) => offers.find(o => o.qty === q) || {qty:q, price:C.PRICE*q};
+  let qty = offers.some(o => o.qty === C.DEFAULT_QTY) ? C.DEFAULT_QTY : offers[0].qty;
+  $('#offers').insertAdjacentHTML('beforeend', offers.map(o => {
+    const full = C.PRICE * o.qty, save = full > o.price;
+    return `<label class="offer">${o.badge ? `<span class="tag">${o.badge}</span>` : ''}
+      <input type="radio" name="offer" value="${o.qty}" ${o.qty===qty?'checked':''}>
+      <span class="dot"></span>
+      <span class="txt"><b>${o.label}</b><small>${o.qty} × بلاك ميد • شحن مجاني</small></span>
+      <span class="pr"><b>${money(o.price)}</b>${save ? `<s>${money(full)}</s>` : ''}</span></label>`;
+  }).join(''));
+  document.querySelectorAll('input[name=offer]').forEach(r => r.addEventListener('change', () => { qty = +r.value; render(); }));
   function render(){
-    $('#qty').textContent = qty;
-    const sub = C.PRICE * qty;
+    const o = offerFor(qty), full = C.PRICE * qty;
     $('#unitPrice').textContent = C.PRICE.toLocaleString('ar-EG');
     $('#stickyPrice').textContent = C.PRICE.toLocaleString('ar-EG');
-    $('#sumSub').textContent = qty + ' × ' + money(C.PRICE);
+    $('#offerHint').textContent = offers.filter(x => x.qty > 1).map(x => `${x.label} بـ ${money(x.price)}`).join(' • ');
+    $('#sumSub').textContent = (o.label || (qty + ' عبوات')) + (full > o.price ? ` (بدل ${money(full)})` : '');
     $('#sumShip').textContent = C.SHIPPING ? money(C.SHIPPING) : 'مجاني';
-    $('#sumTotal').textContent = money(sub + C.SHIPPING);
+    $('#sumTotal').textContent = money(o.price + C.SHIPPING);
   }
-  $('#plus').onclick = () => { qty = Math.min(10, qty + 1); render(); };
-  $('#minus').onclick = () => { qty = Math.max(1, qty - 1); render(); };
   render();
 
   // ===== إخفاء الزرار الثابت لما الفورم يظهر =====
   new IntersectionObserver(([e]) => $('#sticky').classList.toggle('hide', e.isIntersecting), {threshold:.15}).observe($('#order'));
   let checkoutTracked = false;
-  $('#order').addEventListener('focusin', () => { if (!checkoutTracked){ checkoutTracked = true; track('InitiateCheckout',{value:C.PRICE*qty,currency:'EGP'}); } });
+  $('#order').addEventListener('focusin', () => { if (!checkoutTracked){ checkoutTracked = true; track('InitiateCheckout',{value:offerFor(qty).price,currency:'EGP'}); } });
 
   // ===== التحقق والإرسال =====
   const normPhone = (v) => {

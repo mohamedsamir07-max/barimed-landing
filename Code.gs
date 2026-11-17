@@ -25,7 +25,7 @@ const HEADERS = {
     'notes', 'status', 'admin_note', 'updated_at', 'updated_by',
     'utm_source', 'utm_campaign', 'utm_content', 'page_url'],
   Users: ['username', 'password_hash', 'salt', 'client_id', 'display_name', 'role', 'active'],
-  Products: ['client_id', 'product_id', 'name', 'price', 'shipping', 'active'],
+  Products: ['client_id', 'product_id', 'name', 'price', 'shipping', 'active', 'qty'],
 };
 
 /* ============================ HTTP ============================ */
@@ -75,9 +75,10 @@ function createOrder_(b) {
   // السعر من شيت Products — مش من المتصفح
   const product = findProduct_(clientId, productId);
   if (!product) return { ok: false, error: 'validation', fields: { product: 'المنتج غير متاح' } };
-  const unit = Number(product.price) || 0;
+  const p = priceFor_(product, qty);
+  const unit = p.unit;
   const shipping = Number(product.shipping) || 0;
-  const total = unit * qty + shipping;
+  const total = p.subtotal + shipping;
 
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
@@ -98,7 +99,7 @@ function createOrder_(b) {
       date: fmt_(d, 'yyyy-MM-dd'),
       client_id: clientId,
       product_id: productId,
-      product: product.name,
+      product: p.name,
       qty: qty,
       unit_price: unit,
       shipping: shipping,
@@ -197,15 +198,29 @@ function findRecentDuplicate_(sh, phone, clientId, productId) {
   return null;
 }
 
+// المنتج + عروض الكمية: كل صف في Products بعمود qty = سعر إجمالي للكمية دي (مثلاً 2 → 800)
+// الصف اللي qty فاضي أو 1 هو سعر القطعة الأساسي
 function findProduct_(clientId, productId) {
   const values = sheet_('Products').getDataRange().getDisplayValues();
   const idx = indexOf_(values.shift() || []);
+  let base = null; const offers = {};
   for (const r of values) {
-    if (r[idx.client_id] === clientId && r[idx.product_id] === productId && truthy_(r[idx.active])) {
-      return { name: r[idx.name], price: r[idx.price], shipping: r[idx.shipping] };
-    }
+    if (r[idx.client_id] !== clientId || r[idx.product_id] !== productId || !truthy_(r[idx.active])) continue;
+    const q = idx.qty === undefined ? 1 : (parseInt(r[idx.qty], 10) || 1);
+    if (q === 1 && !base) base = { name: r[idx.name], price: r[idx.price], shipping: r[idx.shipping] };
+    else if (q > 1) offers[q] = { name: r[idx.name], price: Number(r[idx.price]) || 0 };
   }
-  return null;
+  if (base) base.offers = offers;
+  return base;
+}
+
+// الإجمالي: لو فيه عرض للكمية دي ناخده، وإلا سعر القطعة × الكمية
+function priceFor_(product, qty) {
+  const unit = Number(product.price) || 0;
+  const offer = product.offers && product.offers[qty];
+  const subtotal = offer ? offer.price : unit * qty;
+  return { subtotal: subtotal, unit: Math.round(subtotal / qty * 100) / 100,
+           name: offer && offer.name ? offer.name : product.name };
 }
 
 /* ============================ Auth ============================ */
